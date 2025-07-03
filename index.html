@@ -22,24 +22,8 @@
       position: relative;
     }
 
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: 
-        radial-gradient(circle at 10% 20%, rgba(0, 255, 225, 0.05) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(0, 255, 225, 0.05) 0%, transparent 20%),
-        url('https://i.postimg.cc/zDCN58CL/IMG-20250611-021047-629.jpg');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.2;
-      z-index: -1;
-    }
-
-    .matrix-code {
+    /* Matrix effect container */
+    .matrix-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -47,7 +31,68 @@
       height: 100%;
       pointer-events: none;
       z-index: -1;
-      opacity: 0.3;
+      overflow: hidden;
+    }
+
+    /* Binary grid background */
+    .binary-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 255, 225, 0.05),
+          rgba(0, 255, 225, 0.05) 1px,
+          transparent 1px,
+          transparent 40px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(0, 255, 225, 0.05),
+          rgba(0, 255, 225, 0.05) 1px,
+          transparent 1px,
+          transparent 40px
+        );
+      opacity: 0.1;
+      animation: gridMove 20s linear infinite;
+    }
+
+    /* Radar scanning effect */
+    .radar-scan {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, transparent 70%, rgba(0, 255, 225, 0.1) 80%, transparent 90%);
+      animation: radarSweep 8s linear infinite;
+      opacity: 0.2;
+    }
+
+    /* Network connection effect */
+    .network-connections {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 225, 0.1) 0%, transparent 15%),
+        radial-gradient(circle at 90% 80%, rgba(0, 255, 225, 0.1) 0%, transparent 15%),
+        radial-gradient(circle at 30% 70%, rgba(0, 255, 225, 0.1) 0%, transparent 15%),
+        radial-gradient(circle at 70% 30%, rgba(0, 255, 225, 0.1) 0%, transparent 15%);
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    .matrix-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
     .login-container {
@@ -72,6 +117,20 @@
         0 0 50px rgba(0, 100, 255, 0.2);
       border: 1px solid rgba(0, 255, 225, 0.2);
       animation: float 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(0, 255, 225, 0.1), transparent);
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
     }
 
     h1 {
@@ -317,6 +376,7 @@
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: pulse 4s infinite;
     }
 
     .stat-box {
@@ -337,6 +397,7 @@
       margin-top: 5px;
     }
 
+    /* Keyframe animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -354,9 +415,9 @@
     }
 
     @keyframes pulse {
-      0% { text-shadow: 0 0 10px rgba(0, 255, 225, 0.7); }
-      50% { text-shadow: 0 0 20px rgba(0, 255, 225, 0.9); }
-      100% { text-shadow: 0 0 10px rgba(0, 255, 225, 0.7); }
+      0% { box-shadow: 0 0 5px rgba(0, 255, 225, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(0, 255, 225, 0.6); }
+      100% { box-shadow: 0 0 5px rgba(0, 255, 225, 0.3); }
     }
 
     @keyframes shake {
@@ -368,6 +429,21 @@
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shine {
+      0% { transform: rotate(30deg) translateX(-100%); }
+      100% { transform: rotate(30deg) translateX(100%); }
+    }
+
+    @keyframes radarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes gridMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
     }
 
     @media (max-width: 768px) {
@@ -397,8 +473,13 @@
   </style>
 </head>
 <body>
-  <!-- Matrix background effect -->
-  <canvas class="matrix-code" id="matrix"></canvas>
+  <!-- Hacking animations container -->
+  <div class="matrix-container">
+    <div class="binary-grid"></div>
+    <div class="radar-scan"></div>
+    <div class="network-connections"></div>
+    <canvas class="matrix-canvas" id="matrix"></canvas>
+  </div>
   
   <!-- Login Page -->
   <div class="login-container" id="loginPage">
@@ -460,7 +541,7 @@
   </div>
   
   <script>
-    // Matrix background effect
+    // Enhanced Matrix background effect
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -472,24 +553,35 @@
     const drops = [];
     
     for (let i = 0; i < columns; i++) {
-      drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+      drops[i] = {
+        y: Math.floor(Math.random() * canvas.height / fontSize),
+        speed: 1 + Math.random() * 2,
+        color: Math.random() > 0.8 ? '#0ff' : '#0f0'
+      };
     }
     
     function drawMatrix() {
       ctx.fillStyle = 'rgba(0, 10, 20, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      ctx.fillStyle = '#0f0';
       ctx.font = `${fontSize}px monospace`;
       
       for (let i = 0; i < drops.length; i++) {
-        const text = chars.charAt(Math.floor(Math.random() * chars.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        const char = chars.charAt(Math.floor(Math.random() * chars.length));
         
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+        // Add a glow effect to characters
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = drops[i].color;
+        ctx.fillStyle = drops[i].color;
+        ctx.fillText(char, i * fontSize, drops[i].y * fontSize);
+        ctx.shadowBlur = 0;
+        
+        if (drops[i].y * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i].y = 0;
+          drops[i].speed = 1 + Math.random() * 2;
+          drops[i].color = Math.random() > 0.8 ? '#0ff' : '#0f0';
         }
-        drops[i]++;
+        drops[i].y += drops[i].speed;
       }
     }
     
@@ -591,7 +683,7 @@
        link: "https://t.me/Nun_SMSBOT?start=7325214936"},
       {name: "𝘽𝘼𝙉 & 𝙐𝙉𝘽𝘼𝙉 𝙈𝙀𝙏𝙃𝙊𝘿", icon: "fas fa-user-slash", 
        link: "https://www.mediafire.com/file/ky41jp64wbws6cs/%25F0%259D%2599%2595%25F0%259D%2598%25BC%25F0%259D%2599%258B%25F0%259D%2599%258B%25F0%259D%2599%2594_%25F0%259D%2599%25BD%25F0%259D%259A%2584%25F0%259D%2599%25BC%25F0%259D%2599%25B1%25F0%259D%2599%25B4%25F0%259D%259A%2581_%25F0%259D%259A%2584%25F0%259D%2599%25BD%252B%25F0%259D%2599%25B1%25F0%259D%2599%25B0%25F0%259D%2599%25BD_%25F0%259D%2599%25BC%25F0%259D%2599%25B4%25F0%259D%259A%2583%25F0%259D%2599%25B7ods_1.7.apk/file"},
-      {name: "𝘾𝘼𝙇𝙇 𝙒𝙄𝙏𝙃𝙊𝙐𝙏 𝙉𝙐𝙈𝘽𝙀𝙍", icon: "fas fa-phone", 
+      {name: "𝘾𝘼𝙇𝙇 𝙒𝙄𝙏𝙃𝙊𝙐𝙏 �𝙐𝙈𝘽𝙀𝙍", icon: "fas fa-phone", 
        link: "https://shorturl.at/jQtk4"},
       {name: "🔱 ɳυɱႦҽɾ Ⴆαɳɳҽԃ αρƙ ᵇʸ ⚡𝙋𝙍𝙊𝙭𝘼𝙔𝘼𝙉 🔱", icon: "fas fa-exclamation-triangle", 
        link: "https://www.mediafire.com/file/mxtph7u6730cjyq/%25F0%259F%2594%25B1_%25C9%25B3%25CF%2585%25C9%25B1%25E1%2582%25A6%25D2%25BD%25C9%25BE_%25E1%2582%25A6%25CE%25B1%25C9%25B3%25C9%25B3%25D2%25BD%25D4%2583_%25CE%25B1%25CF%2585%25C6%2599_%25E1%25B5%2587%25CA%25B8_%25E2%259A%25A1%25F0%259D%2599%2595%25F0%259D%2598%25BC%25F0%259D%2599%258B%25F0%259D%2599%258B%25F0%259D%2599%2594_%25F0%259D%2599%2588%25F0%259D%2599%258A%25F0%259D%2598%25BF%25F0%259D%2599%258E_%25F0%259F%2594%25B1_1.0.apk/file"},
